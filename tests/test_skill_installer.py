@@ -16,7 +16,12 @@ def test_skill_installer_writes_skill_md(tmp_path: Path) -> None:
     result = installer.install(target_dir=target_dir)
     assert result.skill_file == target_dir / "SKILL.md"
     assert result.overwritten is False
-    assert "name: pummel" in result.skill_file.read_text(encoding="utf-8")
+    content = result.skill_file.read_text(encoding="utf-8")
+    assert "name: pummel" in content
+    assert ".pummel/design.puml" in content
+    assert ".pummel/constraints.bib" in content
+    assert "Component diagram" in content
+    assert "Class diagram" in content
 
     with pytest.raises(FileExistsError):
         installer.install(target_dir=target_dir)

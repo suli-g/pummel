@@ -7,26 +7,38 @@ from pydantic import BaseModel, ConfigDict
 BUNDLED_SKILL_MD = """---
 name: pummel
 description: >
-  Multi-agent PUML-to-Code compiler pipeline. Use when working with design.puml,
-  constraints.bib, or orchestrating validated code generation and release steps.
+  Multi-agent PUML-to-Code compiler pipeline. Use when planning or building
+  projects with .pummel/design.puml and .pummel/constraints.bib, or orchestrating
+  validated code generation and release steps.
 ---
 
 # Pummel Skill
 
-Use `pummel` to manage PUML-to-Code compilation runs, state persistence, and
-validated CLI execution.
+Every project must be **planned before it is built**. Use `pummel` to author
+architectural contracts in `.pummel/`, track compilation state, and execute
+validated CLI steps.
 
 ## Workflow
 
-1. **Contracts**: Ensure `design.puml` and `constraints.bib` are present in the
-   project root.
-2. **Initialize State**: Run `pummel` (or `PipelineController.initialize()`) to
-   prepare `.pummel/state.db`.
-3. **Execute Steps**: Use `PipelineController` and `ReleaseExecutor` with
-   `ReleasePayload` for approved CLI binaries (`git`, `gh`, `plantuml`, `mmdc`).
+1. **Plan First (`.pummel/` Contracts)**:
+   - When building a new project (or adding major features), generate
+     `.pummel/design.puml` first before writing implementation code.
+   - If external resources, specifications, or libraries are referenced,
+     generate `.pummel/constraints.bib` alongside it.
+   - Render/validate diagrams using `plantuml` (or `mmdc`) via `ReleaseExecutor`.
+2. **Build at the Diagram's Granularity**:
+   Match your implementation strategy to the abstraction level of `.pummel/design.puml`:
+   - **Flowchart / Activity diagram**: Build the entire end-to-end flow as a cohesive unit.
+   - **Component diagram**: Build and verify component by component.
+   - **Class diagram**: Build and verify class by class.
+   - **Sequence / State diagram**: Build by interaction or state transition.
+3. **Track State**:
+   - Run `pummel` (or `PipelineController.initialize()`) to prepare `.pummel/state.db`.
+   - Record runs and stage transitions (`init`, `parse`, `codegen`, `verify`, `release`)
+     through `PipelineController` and `ReleaseExecutor` (`git`, `gh`, `plantuml`, `mmdc`).
 4. **Unit Tests & Quality Gates**:
-   - Add or update `pytest` unit tests under `tests/` for every generated or
-     modified module, injecting fake/stub dependencies for DB and subprocesses.
+   - Add or update `pytest` unit tests under `tests/` for each unit at the chosen
+     granularity, injecting fake/stub dependencies for DB and subprocesses.
    - Run `uv run pytest`, `uv run ruff check .`, and `uv run mypy .` before
      completing a stage.
 """
