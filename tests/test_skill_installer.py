@@ -25,6 +25,9 @@ def test_skill_installer_writes_skill_md(tmp_path: Path) -> None:
     assert "Component diagram" in content
     assert "Class diagram" in content
     assert "urldate" in content
+    assert "PipelineController" not in content
+    assert "ReleaseExecutor" not in content
+    assert "ReferenceRepository" not in content
 
     with pytest.raises(FileExistsError):
         installer.install(target_dir=target_dir)

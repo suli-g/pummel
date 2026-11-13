@@ -7,56 +7,71 @@ from pydantic import BaseModel, ConfigDict
 BUNDLED_SKILL_MD = """---
 name: pummel
 description: >
-  Multi-agent PUML-to-Code compiler pipeline. Use when planning or building
-  projects with .pummel/ diagrams, .pummel/constraints.bib, or orchestrating
-  validated code generation and release steps.
+  Plan-first software design and implementation workflow using PlantUML diagrams
+  in .pummel/ and BibTeX references in .pummel/constraints.bib.
 ---
 
-# Pummel Skill
+# Pummel Workflow
 
-Every project must be **planned before it is built**. Use `pummel` to decompose
-requirements into `.pummel/` diagrams, record external references in `.bib` and
-SQLite, track compilation state, and build at the user's chosen granularity.
+Every project must be **planned before it is built**. Follow these five
+processes in order before and during implementation.
 
-## User Communication Modes
+## 1. Feedback & Discovery Process
 
-Users may interact with an agent in different ways—adapt and document the input:
-- **Holistic description**: Describes the entire system end-to-end without naming roles.
+Users may communicate requirements in different ways—adapt to their style and
+document what is given:
+- **Holistic description**: Describes the entire system end-to-end without explicit roles.
 - **Role-driven description**: Describes distinct actors, personas, or user roles.
 - **Constraint / Architecture-first**: Specifies technical boundaries, stacks, or patterns up front.
 
-## Workflow
+Always pause for explicit user feedback at key decision points:
+- **Architecture style**: Ask the user what architecture style they want (e.g., OOP,
+  functional, layered, event-driven). If OOP, model the system with a class diagram.
+- **Build granularity**: Ask the user at what level/granularity they want the project
+  to be built from.
+- **External dependencies**: Prompt the user before adopting any external library,
+  service, or binary.
 
-1. **Decompose Roles & Systems (`.pummel/systems/`)**:
-   - Identify all user roles in the prompt; if none are described, **assume a single role**.
-   - For each role, create a **context diagram** mapping the user to the holistic system
-     in `.pummel/systems/contexts/`.
-   - For each system, create **use case diagrams** in `.pummel/systems/use-cases/`.
-   - For each use case, create a **sequence diagram** in `.pummel/systems/sequences/`.
-2. **Confirm Architecture & Build Granularity**:
-   - **Ask the user** which architecture style they want (e.g., OOP, functional, layered).
-     If **OOP**, describe the system using a **class diagram** (e.g., `.pummel/design.puml`).
-   - **Ask the user** the granularity/level at which they want to build:
-     - **Flowchart / Activity diagram**: Build the entire end-to-end flow.
-     - **Component diagram**: Build and verify component by component.
-     - **Class diagram**: Build and verify class by class.
-     - **Sequence / State diagram**: Build by interaction or state transition.
-3. **Research Phase & External Dependencies (`.pummel/constraints.bib`)**:
-   - Begin the research phase only after the diagrams are mapped.
-   - If an external dependency is required, **prompt the user** for explicit approval
-     before adopting it.
-   - If approved, create a BibTeX reference in `.pummel/constraints.bib` containing at
-     minimum the resource **link (`url`)** and **access date (`urldate`)**, and store
-     it in the `bib_references` SQLite table via `ReferenceRepository` before RAG indexing.
-4. **Track State & Execute**:
-   - Run `pummel` (or `PipelineController.initialize()`) to prepare `.pummel/state.db`.
-   - Record runs and stage transitions through `PipelineController` and `ReleaseExecutor`
-     (`git`, `gh`, `plantuml`, `mmdc`).
-5. **Unit Tests & Quality Gates**:
-   - Add or update `pytest` unit tests under `tests/` for each unit at the chosen
-     granularity, injecting fake/stub dependencies for DB and subprocesses.
-   - Run `uv run pytest`, `uv run ruff check .`, and `uv run mypy .` before
-     completing a stage.
+## 2. Diagram Creation Process (`.pummel/`)
+
+Decompose the system into PlantUML diagrams before writing implementation code:
+1. **Roles**: Identify all user roles from the prompt. If none are described,
+   **assume a single role**.
+2. **Context diagrams** (`.pummel/systems/contexts/`): For each role, map the user
+   to the holistic system.
+3. **Use case diagrams** (`.pummel/systems/use-cases/`): For each system, create
+   use case diagrams.
+4. **Sequence diagrams** (`.pummel/systems/sequences/`): For each use case, create
+   a sequence diagram.
+5. **Architecture diagram** (`.pummel/design.puml`): Once the user selects an
+   architecture style (e.g., a class diagram for OOP), produce the structural
+   diagram at the agreed granularity.
+
+## 3. Research Process
+
+Begin the research phase **only after** the diagrams are mapped:
+- Investigate algorithms, patterns, APIs, and candidate dependencies needed to
+  satisfy the mapped diagrams.
+- Do not install or import any external dependency without first prompting the
+  user and receiving approval.
+
+## 4. Referencing Process (`.pummel/constraints.bib`)
+
+Record every approved external dependency, specification, or reference in
+`.pummel/constraints.bib` using BibTeX format. Each entry must include at minimum:
+- `url`: The link to the resource or package documentation.
+- `urldate`: The date the resource was accessed (e.g., `2026-11-13`).
+
+## 5. Implementation Process
+
+Build the project strictly according to the granularity agreed upon with the user:
+- **Flowchart / Activity diagram**: Build the entire end-to-end flow as a cohesive unit.
+- **Component diagram**: Build and verify component by component.
+- **Class diagram**: Build and verify class by class.
+- **Sequence / State diagram**: Build by interaction or state transition.
+
+Add unit tests as appropriate for each implemented unit and verify that tests and
+project checks pass before moving to the next unit.
 """
 
 
