@@ -29,6 +29,10 @@ Always pause for explicit user feedback at key decision points:
   functional, layered, event-driven). If OOP, model the system with a class diagram.
 - **Build granularity**: Ask the user at what level/granularity they want the project
   to be built from.
+- **Building cadence & further breakdown**: Once UML diagrams are generated (or if UML
+  already exists), ask the user to choose the building cadence (e.g., step-by-step
+  with review checkpoints, component-by-component batches, or full end-to-end) and
+  invite them to suggest further breakdowns of specific components before building.
 - **External dependencies**: Prompt the user before adopting any external library,
   service, or binary.
 
@@ -45,7 +49,8 @@ Decompose the system into PlantUML diagrams before writing implementation code:
    a sequence diagram.
 5. **Architecture diagram** (`.pummel/design.puml`): Once the user selects an
    architecture style (e.g., a class diagram for OOP), produce the structural
-   diagram at the agreed granularity.
+   diagram at the agreed granularity. If the user requests further breakdowns of
+   specific components, refine the diagrams before proceeding.
 
 ## 3. Research Process
 
@@ -64,14 +69,16 @@ Record every approved external dependency, specification, or reference in
 
 ## 5. Implementation Process
 
-Build the project strictly according to the granularity agreed upon with the user:
+Build the project strictly according to the granularity and **building cadence**
+chosen by the user:
 - **Flowchart / Activity diagram**: Build the entire end-to-end flow as a cohesive unit.
 - **Component diagram**: Build and verify component by component.
 - **Class diagram**: Build and verify class by class.
 - **Sequence / State diagram**: Build by interaction or state transition.
 
-Add unit tests as appropriate for each implemented unit and verify that tests and
-project checks pass before moving to the next unit.
+Follow the user's chosen cadence (e.g., pausing after each component/unit for review
+or refinement if requested), add unit tests as appropriate for each implemented unit,
+and verify that tests and project checks pass before moving to the next unit.
 """
 
 
